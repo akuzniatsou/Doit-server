@@ -13,7 +13,7 @@ apply plugin: 'war'
 apply plugin: 'org.springframework.boot'
 
 jar {
-    baseName = 'doit-serves'
+    baseName = 'doit-server'
     version =  '0.1.0'
 }
 
