@@ -1,0 +1,37 @@
+#!/bin/bash
+GRADLE_VERSION="3.2"
+JDK_VERSION="1.8.0_65"
+set -x
+
+cd $OPENSHIFT_DATA_DIR	
+
+if [ ! -d jdk$JDK_VERSION ]
+        then
+                wget --no-check-certificate --no-cookies --header "Cookie: oraclelicense=accept-securebackup-cookie" http://download.oracle.com/otn-pub/java/jdk/8u65-b17/jdk-8u65-linux-x64.tar.gz
+                tar xvf *.tar.gz
+                rm -f *.tar.gz
+fi
+
+if [ ! -d gradle-$GRADLE_VERSION ]
+        then
+                wget https://services.gradle.org/distributions/gradle-$GRADLE_VERSION-bin.zip
+                unzip gradle-$GRADLE_VERSION-bin.zip
+                rm -f gradle-$GRADLE_VERSION-bin.zip
+fi
+
+if [ ! -d gradle ]; then
+	mkdir gradle
+fi
+
+if [ ! -d logs ]; then
+	mkdir logs
+fi
+
+cd $OPENSHIFT_REPO_DIR
+export GRADLE_USER_HOME=${OPENSHIFT_DATA_DIR}gradle
+export GRADLE_HOME=$GRADLE_USER_HOME-$GRADLE_VERSION
+export GRADLE_OPTS="-Xms384m -Xmx412m"
+export JAVA_HOME=${OPENSHIFT_DATA_DIR}jdk$JDK_VERSION
+export PATH=$JAVA_HOME/bin:$GRADLE_HOME/bin:$PATH
+
+gradle clean bootRepackage
